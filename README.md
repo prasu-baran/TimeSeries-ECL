@@ -276,7 +276,7 @@ The following 5-epoch training and validation loss values are the result values 
 
 ## Result Interpretation
 
-The baseline stage justifies Informer as the main encoder choice. Among Autoformer, PatchTST, FEDFormer, and Informer, Informer gives the best average MSE and MAE, and it is designed for long-sequence dependency learning. This is why `TimeBase+Informer` is the primary extension path.
+The baseline stage justifies Informer as the main encoder choice. Among 4 base models, Informer gives the best average MSE and MAE, and it is designed for long-sequence dependency learning. This is why `TimeBase+Informer` is the primary extension path.
 
 The extension stage shows that adding an encoder branch improves TimeBase consistently:
 
@@ -315,7 +315,6 @@ The cleaned training and validation loss plots are available in the `results` fo
 |-- PatchTST.ipynb
 |-- FEDFormer.ipynb
 |-- Informer.ipynb
-|-- TimeBase_Values.xlsx
 |-- TimeBase_Extension.pdf
 |-- TImeBase+Informer/
 |   |-- Load House 1.csv
@@ -368,7 +367,7 @@ python generate_faculty_loss_graphs.py
 
 ## Key Takeaway
 
-Informer was chosen after the baseline screening because it had the best overall forecasting performance among the four tested models and is designed for long-sequence temporal dependency learning. TimeBase+Informer confirms that adding this encoder-style residual branch improves TimeBase across all horizons. PMFormer was then tested as a newer Informer-based improvement, and in the five-epoch validation-loss comparison, TimeBase+PMFormer achieved the strongest final results.
+Informer was chosen after the baseline screening because it had the best overall forecasting performance among the four tested models and is designed for long-sequence temporal dependency learning. TimeBase+Informer confirms that adding this encoder-style residual branch improves TimeBase across all horizons. PMFormer was then tested as a newer Informer-based improvement and in the five-epoch validation-loss comparison, TimeBase+PMFormer achieved the strongest final results.
 
 Therefore, the repository documents both the selection logic and the extension evidence:
 
