@@ -1,3 +1,21 @@
+"""
+This file trains the TimeBase baseline and a TimeBase+PMFormer hybrid for
+ forecasting on Load House 1.csv. The comments below mark the
+paper or project reference behind each major block so the file can be read from
+data ingestion through final comparison outputs.
+
+Primary references:
+1. TimeBase - "TimeBase: The Power of Minimalism in Efficient Long-term
+   Time Series Forecasting" (ICML/PMLR 2025): 24-hour segmentation, learned
+   temporal bases, segment-level forecasting, and orthogonality regularization.
+2. PMFormer - "PMformer: A novel informer-based model for accurate long-term
+   time series prediction" (Information Sciences, 2025): patch-level sequence
+   encoding used here as the residual enhancement branch.
+3. Project README / TimeBase_Extension report: Load House 1 data protocol,
+   720-hour lookback window, 1/8/16/24-hour horizons, metric reporting, and
+   output artifact generation.
+"""
+
 import argparse
 import copy
 import csv
@@ -24,7 +42,8 @@ try:
 except Exception:
     plt = None
 
-
+# Project experiment reference: centralizes the dataset, forecasting horizons,
+# model sizes, learning rates, and output settings used across all runs.
 @dataclass
 class Config:
     csv_path: str = "Load House 1.csv"
@@ -53,6 +72,8 @@ class Config:
     save_prediction_windows: int = 256
 
 
+# Reproducibility reference: fixes Python, NumPy, and PyTorch random seeds for
+# comparable baseline-vs-hybrid experiments.
 def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
@@ -62,10 +83,14 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = True
 
 
+# Dataset reference: converts the separate Date and Hour columns in
+# Load House 1.csv into a single timestamp key.
 def parse_dt(date_text, hour_text):
     return datetime.fromisoformat(f"{date_text}T{hour_text}")
 
 
+# Project data reference: aggregates 15-minute consumption readings into the
+# hourly series used by both TimeBase and TimeBase+PMFormer.
 def load_hourly_consumption(csv_path):
     buckets = defaultdict(list)
     with open(csv_path, newline="", encoding="utf-8") as f:
@@ -109,6 +134,8 @@ def load_hourly_consumption(csv_path):
     return hourly_times, values
 
 
+# Evaluation protocol reference: keeps chronological order, fits scaling only
+# on the train span, and overlaps validation/test by seq_len for valid windows.
 def split_and_scale(values, seq_len):
     n = len(values)
     train_end = int(n * 0.70)
@@ -125,6 +152,8 @@ def split_and_scale(values, seq_len):
     return train, val, test, mean.astype(np.float32), std.astype(np.float32), train_end, val_end
 
 
+# Forecasting-window reference: creates sliding 720-hour input windows and the
+# requested prediction horizon for supervised time-series training.
 class ForecastDataset(Dataset):
     def __init__(self, values, seq_len, pred_len):
         self.values = values.astype(np.float32)
@@ -140,6 +169,8 @@ class ForecastDataset(Dataset):
         return torch.from_numpy(x), torch.from_numpy(y)
 
 
+# Loader reference: wraps each chronological split in a PyTorch DataLoader while
+# preserving deterministic validation/test ordering.
 def make_loader(values, seq_len, pred_len, batch_size, shuffle, num_workers):
     dataset = ForecastDataset(values, seq_len, pred_len)
     return DataLoader(
@@ -152,6 +183,8 @@ def make_loader(values, seq_len, pred_len, batch_size, shuffle, num_workers):
     )
 
 
+# TimeBase paper reference: implements the minimalist segmented basis extractor
+# and segment projection head that form the baseline forecasting core.
 class TimeBaseCore(nn.Module):
     def __init__(self, seq_len, pred_len, seg_len=24, basis_num=6):
         super().__init__()
@@ -182,6 +215,8 @@ class TimeBaseCore(nn.Module):
         return out, basis
 
 
+# TimeBase paper reference: penalizes correlation between learned bases so the
+# basis set captures diverse temporal patterns instead of duplicate components.
 def orth_loss(basis):
     b, c, r, p = basis.shape
     z = basis.reshape(b * c, r, p)
@@ -191,6 +226,8 @@ def orth_loss(basis):
     return ((gram * (1.0 - eye)) ** 2).mean()
 
 
+# Baseline reference: exposes the plain TimeBase model for direct comparison
+# against the residual PMFormer extension under the same data protocol.
 class BaseTimeBase(nn.Module):
     def __init__(self, cfg, pred_len):
         super().__init__()
@@ -206,6 +243,8 @@ class BaseTimeBase(nn.Module):
         return pred, basis, None
 
 
+# PMFormer paper reference: combines temporal self-attention, local convolution,
+# and a feed-forward block to encode patch-level long-range dependencies.
 class PMFormerEncoderBlock(nn.Module):
     def __init__(self, d_model, n_heads, d_ff, dropout):
         super().__init__()
@@ -244,6 +283,8 @@ class PMFormerEncoderBlock(nn.Module):
         return x
 
 
+# PMFormer extension reference: converts the 720-hour input into 24-hour patches
+# and predicts a residual correction to the TimeBase forecast.
 class PMFormerPatchEncoderResidual(nn.Module):
     def __init__(self, cfg, pred_len):
         super().__init__()
@@ -286,6 +327,8 @@ class PMFormerPatchEncoderResidual(nn.Module):
         return residual
 
 
+# New Architecture reference: adds a gated PMFormer residual branch on top of
+# the TimeBase core so the extension can help without overpowering the baseline.
 class TimeBasePMFormer(nn.Module):
     def __init__(self, cfg, pred_len):
         super().__init__()
@@ -305,10 +348,14 @@ class TimeBasePMFormer(nn.Module):
         return base_pred + gate * residual, basis, gate
 
 
+# Metric reference: returns scaled predictions to the original kW range before
+# computing MAE, MSE, and RMSE for report-ready results.
 def inverse_scale(arr, mean, std):
     return arr * std.reshape(1, 1, -1) + mean.reshape(1, 1, -1)
 
 
+# Evaluation reference: measures each trained model on validation/test loaders
+# without gradient updates and stores predictions for later plots/tables.
 @torch.no_grad()
 def evaluate(model, loader, device, mean, std):
     model.eval()
@@ -344,6 +391,8 @@ def evaluate(model, loader, device, mean, std):
     }
 
 
+# Training protocol reference: applies the same epoch loop to TimeBase and the
+# hybrid model, adding orthogonality loss for TimeBase-style basis learning.
 def train_one_model(model, model_name, horizon, loaders, cfg, device, mean, std, init_state=None):
     train_loader, val_loader, test_loader = loaders
     model = model.to(device)
@@ -461,10 +510,14 @@ def train_one_model(model, model_name, horizon, loaders, cfg, device, mean, std,
     return model, rows, metrics, test
 
 
+# Utility reference: reports trainable capacity so accuracy improvements can be
+# compared with model-size cost.
 def count_params(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
+# Artifact reference: writes tabular experiment logs used by the generated
+# report, metrics table, and comparison summary.
 def write_csv(path, rows, fieldnames=None):
     path.parent.mkdir(parents=True, exist_ok=True)
     if not rows:
@@ -477,6 +530,8 @@ def write_csv(path, rows, fieldnames=None):
         writer.writerows(rows)
 
 
+# Artifact reference: exports representative prediction-vs-actual windows for
+# manual checking without opening the binary NPZ files.
 def save_prediction_csv(path, preds, trues, horizon, max_windows):
     rows = []
     windows = min(max_windows, preds.shape[0])
@@ -494,10 +549,14 @@ def save_prediction_csv(path, preds, trues, horizon, max_windows):
     write_csv(path, rows, ["window", "step", "actual", "prediction", "error"])
 
 
+# Reporting utility reference: converts model names and metric labels into safe
+# artifact filenames for plots and CSV exports.
 def safe_file_name(text):
     return text.replace("+", "_plus_").replace(" ", "_").replace("/", "_")
 
 
+# Visualization reference: tracks the best validation/test curve value reached
+# so far, which makes epoch plots easier to interpret.
 def best_so_far_values(values):
     best = float("inf")
     out = []
@@ -507,6 +566,8 @@ def best_so_far_values(values):
     return out
 
 
+# Visualization reference: creates dependency-light SVG plots for epoch curves
+# and metric summaries when the experiment artifacts are generated.
 def save_svg_line_plot(path, title, x_label, y_label, series):
     width = 900
     height = 520
@@ -583,6 +644,8 @@ def save_svg_line_plot(path, title, x_label, y_label, series):
     path.write_text("\n".join(elements), encoding="utf-8")
 
 
+# Reporting reference: plots training, validation, and test progress for one
+# model-horizon pair so convergence can be inspected visually.
 def plot_epoch_curves(results_dir, epoch_rows, model_name, horizon):
     rows = [r for r in epoch_rows if r["model"] == model_name and r["horizon"] == horizon]
     if not rows:
@@ -640,6 +703,8 @@ def plot_epoch_curves(results_dir, epoch_rows, model_name, horizon):
     plt.close()
 
 
+# Reporting reference: compares final test MAE/MSE values across the baseline
+# and PMFormer hybrid for all configured horizons.
 def plot_metric_bars(results_dir, metrics_rows, metric):
     if plt is None:
         return
@@ -662,6 +727,8 @@ def plot_metric_bars(results_dir, metrics_rows, metric):
     plt.close()
 
 
+# Reporting reference: builds a compact baseline-vs-hybrid improvement table for
+# each forecast horizon.
 def build_comparison(metrics_rows):
     rows = []
     for h in sorted({r["horizon"] for r in metrics_rows}):
@@ -683,6 +750,8 @@ def build_comparison(metrics_rows):
     return rows
 
 
+# CLI reference: lets the same documented experiment be repeated with adjusted
+# paths, horizons, learning rates, and gate settings.
 def parse_args():
     parser = argparse.ArgumentParser(description="Train TimeBase and TimeBase+PMFormer on Load House 1.")
     parser.add_argument("--csv-path", default=Config.csv_path)
@@ -700,6 +769,8 @@ def parse_args():
     return parser.parse_args()
 
 
+# End-to-end protocol reference: loads data, trains TimeBase first, initializes
+# the hybrid from the baseline core, then saves metrics, predictions, and plots.
 def main():
     args = parse_args()
     cfg = Config(

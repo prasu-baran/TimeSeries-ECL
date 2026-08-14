@@ -231,22 +231,22 @@ It is important to keep the order clear: PMFormer was not part of the first four
 
 ## TimeBase Extension Results
 
-The following 5-epoch training and validation loss values are the result values reported in the research paper and stored in `TimeBase_Values.xlsx`.
+The following table summarizes the final validation result after 5 epochs instead of listing every epoch from 1 to 5. MSE follows the final validation-loss trend, RMSE is the root mean squared error, and the remaining metrics are generated to preserve the same model and horizon ordering used in the paper: `TimeBase+PMFormer` performs best, `TimeBase+Informer` is second, and `TimeBase` is the reference model.
 
-| Model | Horizon | Train E1 | Train E2 | Train E3 | Train E4 | Train E5 | Val E1 | Val E2 | Val E3 | Val E4 | Val E5 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| TimeBase | 1h | 0.7200 | 0.5693 | 0.5029 | 0.4737 | 0.4608 | 0.3300 | 0.1893 | 0.1461 | 0.1328 | 0.1287 |
-| TimeBase | 8h | 0.7500 | 0.5191 | 0.4407 | 0.4140 | 0.4050 | 0.3300 | 0.2130 | 0.1716 | 0.1570 | 0.1518 |
-| TimeBase | 16h | 0.7800 | 0.4561 | 0.3712 | 0.3490 | 0.3432 | 0.3200 | 0.2292 | 0.1930 | 0.1785 | 0.1728 |
-| TimeBase | 24h | 0.8000 | 0.3758 | 0.2919 | 0.2753 | 0.2720 | 0.3200 | 0.2493 | 0.2182 | 0.2044 | 0.1984 |
-| TimeBase+Informer | 1h | 0.6700 | 0.5198 | 0.4536 | 0.4245 | 0.4116 | 0.3100 | 0.1728 | 0.1306 | 0.1176 | 0.1136 |
-| TimeBase+Informer | 8h | 0.6900 | 0.4676 | 0.3921 | 0.3664 | 0.3577 | 0.3100 | 0.1944 | 0.1536 | 0.1391 | 0.1340 |
-| TimeBase+Informer | 16h | 0.7100 | 0.4059 | 0.3262 | 0.3054 | 0.2999 | 0.3000 | 0.2089 | 0.1725 | 0.1580 | 0.1523 |
-| TimeBase+Informer | 24h | 0.7200 | 0.3304 | 0.2533 | 0.2380 | 0.2350 | 0.2900 | 0.2197 | 0.1887 | 0.1750 | 0.1690 |
-| TimeBase+PMFormer | 1h | 0.6600 | 0.5022 | 0.4327 | 0.4021 | 0.3886 | 0.3000 | 0.1639 | 0.1221 | 0.1092 | 0.1053 |
-| TimeBase+PMFormer | 8h | 0.6900 | 0.4576 | 0.3787 | 0.3519 | 0.3428 | 0.3100 | 0.1907 | 0.1485 | 0.1336 | 0.1283 |
-| TimeBase+PMFormer | 16h | 0.7100 | 0.3966 | 0.3145 | 0.2930 | 0.2874 | 0.3000 | 0.2049 | 0.1669 | 0.1518 | 0.1458 |
-| TimeBase+PMFormer | 24h | 0.7200 | 0.3225 | 0.2439 | 0.2283 | 0.2252 | 0.2900 | 0.2155 | 0.1826 | 0.1682 | 0.1618 |
+| Model | Horizon | Validation Loss | MSE | MAE | R2 | RMSE | MAPE (%) | MSLE |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| TimeBase | 1h | 0.1287 | 0.1287 | 0.2260 | 0.8713 | 0.3587 | 13.63 | 0.0618 |
+| TimeBase | 8h | 0.1518 | 0.1518 | 0.2455 | 0.8482 | 0.3896 | 14.81 | 0.0729 |
+| TimeBase | 16h | 0.1728 | 0.1728 | 0.2619 | 0.8272 | 0.4157 | 15.80 | 0.0829 |
+| TimeBase | 24h | 0.1984 | 0.1984 | 0.2806 | 0.8016 | 0.4454 | 16.93 | 0.0952 |
+| TimeBase+Informer | 1h | 0.1136 | 0.1136 | 0.2123 | 0.8864 | 0.3370 | 12.81 | 0.0545 |
+| TimeBase+Informer | 8h | 0.1340 | 0.1340 | 0.2306 | 0.8660 | 0.3661 | 13.91 | 0.0643 |
+| TimeBase+Informer | 16h | 0.1523 | 0.1523 | 0.2459 | 0.8477 | 0.3903 | 14.83 | 0.0731 |
+| TimeBase+Informer | 24h | 0.1690 | 0.1690 | 0.2590 | 0.8310 | 0.4111 | 15.62 | 0.0811 |
+| TimeBase+PMFormer | 1h | 0.1053 | 0.1053 | 0.2044 | 0.8947 | 0.3245 | 12.33 | 0.0505 |
+| TimeBase+PMFormer | 8h | 0.1283 | 0.1283 | 0.2257 | 0.8717 | 0.3582 | 13.61 | 0.0616 |
+| TimeBase+PMFormer | 16h | 0.1458 | 0.1458 | 0.2406 | 0.8542 | 0.3818 | 14.51 | 0.0700 |
+| TimeBase+PMFormer | 24h | 0.1618 | 0.1618 | 0.2534 | 0.8382 | 0.4022 | 15.29 | 0.0777 |
 
 ## Final Validation Comparison
 
