@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+  <title id="title">TimeBase vs TimeBase+Informer MAE Trend</title>
+  <desc id="desc">Line chart comparing MAE values for TimeBase and TimeBase+Informer at 1h, 8h, 16h, and 24h horizons.</desc>
+  <style>
+    text { font-family: "Segoe UI", Arial, sans-serif; fill: #1c222d; }
+    .muted { fill: #66707f; font-size: 13px; }
+    .tick { font-size: 14px; }
+    .title { font-size: 24px; font-weight: 700; }
+    .axis { font-size: 15px; font-weight: 700; }
+    .value { font-size: 13px; font-weight: 600; }
+    .grid { stroke: #e2e7ee; stroke-width: 1; }
+    .frame { fill: none; stroke: #1c222d; stroke-width: 1.5; }
+    .timebase { stroke: #2b6cb0; fill: #2b6cb0; }
+    .informer { stroke: #dd6b20; fill: #dd6b20; }
+  </style>
+  <rect width="900" height="520" fill="#ffffff"/>
+  <text x="90" y="38" class="title">TimeBase vs TimeBase+Informer - MAE Trend</text>
+  <text x="90" y="492" class="muted">Lower is better</text>
+  <g aria-hidden="true">
+    <line x1="90" y1="400" x2="830" y2="400" class="grid"/>
+    <line x1="90" y1="286.7" x2="830" y2="286.7" class="grid"/>
+    <line x1="90" y1="173.3" x2="830" y2="173.3" class="grid"/>
+    <line x1="90" y1="60" x2="830" y2="60" class="grid"/>
+    <line x1="90" y1="60" x2="90" y2="400" class="grid"/>
+    <line x1="315.2" y1="60" x2="315.2" y2="400" class="grid"/>
+    <line x1="572.6" y1="60" x2="572.6" y2="400" class="grid"/>
+    <line x1="830" y1="60" x2="830" y2="400" class="grid"/>
+    <rect x="90" y="60" width="740" height="340" class="frame"/>
+  </g>
+  <g>
+    <text x="45" y="405" class="muted">0.270</text>
+    <text x="45" y="292" class="muted">0.310</text>
+    <text x="45" y="179" class="muted">0.350</text>
+    <text x="45" y="65" class="muted">0.390</text>
+    <text x="82" y="430" class="tick">1h</text>
+    <text x="306" y="430" class="tick">8h</text>
+    <text x="560" y="430" class="tick">16h</text>
+    <text x="818" y="430" class="tick">24h</text>
+    <text x="395" y="468" class="axis">Forecast Horizon</text>
+    <text x="24" y="250" class="axis" transform="rotate(-90 24 250)">MAE</text>
+  </g>
+  <g>
+    <line x1="610" y1="36" x2="644" y2="36" class="timebase" stroke-width="4"/>
+    <text x="654" y="41" class="tick">TimeBase</text>
+    <line x1="735" y1="36" x2="769" y2="36" class="informer" stroke-width="4"/>
+    <text x="779" y="41" class="tick">TimeBase+Informer</text>
+  </g>
+  <polyline points="90,85.5 315.2,94 572.6,108.2 830,102.5" class="timebase" fill="none" stroke-width="4"/>
+  <polyline points="90,368.8 315.2,145 572.6,139.3 830,116.7" class="informer" fill="none" stroke-width="4"/>
+  <g class="timebase">
+    <circle cx="90" cy="85.5" r="6"/><circle cx="315.2" cy="94" r="6"/><circle cx="572.6" cy="108.2" r="6"/><circle cx="830" cy="102.5" r="6"/>
+  </g>
+  <g class="informer">
+    <circle cx="90" cy="368.8" r="6"/><circle cx="315.2" cy="145" r="6"/><circle cx="572.6" cy="139.3" r="6"/><circle cx="830" cy="116.7" r="6"/>
+  </g>
+  <g class="value">
+    <text x="68" y="65">0.381</text><text x="293" y="74">0.378</text><text x="551" y="88">0.373</text><text x="808" y="82">0.375</text>
+    <text x="68" y="391">0.281</text><text x="293" y="168">0.360</text><text x="551" y="162">0.362</text><text x="808" y="140">0.370</text>
+  </g>
+</svg>

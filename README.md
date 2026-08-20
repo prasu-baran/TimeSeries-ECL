@@ -307,6 +307,15 @@ The cleaned training and validation loss plots are available in the `results` fo
 | TimeBase in PMFormer run | [plot](TimeBase+PMFormer/results/timebase_1h_loss_curve.png) | [plot](TimeBase+PMFormer/results/timebase_8h_loss_curve.png) | [plot](TimeBase+PMFormer/results/timebase_16h_loss_curve.png) | [plot](TimeBase+PMFormer/results/timebase_24h_loss_curve.png) |
 | TimeBase+PMFormer | [plot](TimeBase+PMFormer/results/timebase_pmformer_1h_loss_curve.png) | [plot](TimeBase+PMFormer/results/timebase_pmformer_8h_loss_curve.png) | [plot](TimeBase+PMFormer/results/timebase_pmformer_16h_loss_curve.png) | [plot](TimeBase+PMFormer/results/timebase_pmformer_24h_loss_curve.png) |
 
+TimeBase vs TimeBase+Informer metric comparison figures:
+
+| Metric | Figure |
+|---|---|
+| MSE | [plot](TImeBase+Informer/results/timebase_vs_informer_mse.svg) |
+| MAE | [plot](TImeBase+Informer/results/timebase_vs_informer_mae.svg) |
+| R2 | [plot](TImeBase+Informer/results/timebase_vs_informer_r2.svg) |
+| MSLE | [plot](TImeBase+Informer/results/timebase_vs_informer_msle.svg) |
+
 ## Repository Structure
 
 ```text
