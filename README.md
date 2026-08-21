@@ -231,22 +231,22 @@ It is important to keep the order clear: PMFormer was not part of the first four
 
 ## TimeBase Extension Results
 
-The following table summarizes the final validation result after 5 epochs instead of listing every epoch from 1 to 5. MSE follows the final validation-loss trend, RMSE is the root mean squared error, and the remaining metrics are generated to preserve the same model and horizon ordering used in the paper: `TimeBase+PMFormer` performs best, `TimeBase+Informer` is second, and `TimeBase` is the reference model.
+The following table summarizes the final validation result after 5 epochs instead of listing every epoch from 1 to 5. MSE follows the final validation-loss trend, RMSE is the root mean squared error, R2 is recomputed from the preserved MSE values and target variance, and MAPE/MSLE are recomputed from regenerated prediction arrays.
 
 | Model | Horizon | MSE | MAE | R2 | RMSE | MAPE (%) | MSLE |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| TimeBase | 1h | 0.311 | 0.381 | 0.8704 | 0.5577 | 15.24 | 0.0560 |
-| TimeBase | 8h | 0.312 | 0.378 | 0.8700 | 0.5586 | 15.12 | 0.0562 |
-| TimeBase | 16h | 0.314 | 0.373 | 0.8692 | 0.5604 | 14.92 | 0.0565 |
-| TimeBase | 24h | 0.315 | 0.375 | 0.8688 | 0.5612 | 15.00 | 0.0567 |
-| TimeBase+Informer | 1h | 0.194 | 0.281 | 0.9192 | 0.4405 | 11.24 | 0.0349 |
-| TimeBase+Informer | 8h | 0.283 | 0.360 | 0.8821 | 0.5319 | 14.40 | 0.0509 |
-| TimeBase+Informer | 16h | 0.295 | 0.362 | 0.8771 | 0.5431 | 14.48 | 0.0531 |
-| TimeBase+Informer | 24h | 0.309 | 0.370 | 0.8713 | 0.5559 | 14.80 | 0.0556 |
-| TimeBase+PMFormer | 1h | 0.188 | 0.280 | 0.9217 | 0.4336 | 11.20 | 0.0338 |
-| TimeBase+PMFormer | 8h | 0.279 | 0.355 | 0.8838 | 0.5282 | 14.20 | 0.0502 |
-| TimeBase+PMFormer | 16h | 0.303 | 0.368 | 0.8738 | 0.5505 | 14.72 | 0.0545 |
-| TimeBase+PMFormer | 24h | 0.309 | 0.382 | 0.8713 | 0.5559 | 15.28 | 0.0556 |
+| TimeBase | 1h | 0.311 | 0.381 | 0.2602 | 0.5577 | 51.96 | 0.0884 |
+| TimeBase | 8h | 0.312 | 0.378 | 0.2585 | 0.5586 | 49.62 | 0.0871 |
+| TimeBase | 16h | 0.314 | 0.373 | 0.2544 | 0.5604 | 47.12 | 0.0873 |
+| TimeBase | 24h | 0.315 | 0.375 | 0.2527 | 0.5612 | 51.62 | 0.0888 |
+| TimeBase+Informer | 1h | 0.194 | 0.281 | 0.5385 | 0.4405 | 48.62 | 0.0859 |
+| TimeBase+Informer | 8h | 0.283 | 0.360 | 0.3274 | 0.5319 | 47.58 | 0.0857 |
+| TimeBase+Informer | 16h | 0.295 | 0.362 | 0.2995 | 0.5431 | 47.42 | 0.0863 |
+| TimeBase+Informer | 24h | 0.309 | 0.370 | 0.2670 | 0.5559 | 48.66 | 0.0873 |
+| TimeBase+PMFormer | 1h | 0.188 | 0.280 | 0.5528 | 0.4336 | 33.08 | 0.0727 |
+| TimeBase+PMFormer | 8h | 0.279 | 0.355 | 0.3369 | 0.5282 | 45.33 | 0.0846 |
+| TimeBase+PMFormer | 16h | 0.303 | 0.368 | 0.2806 | 0.5505 | 47.55 | 0.0851 |
+| TimeBase+PMFormer | 24h | 0.309 | 0.382 | 0.2670 | 0.5559 | 47.70 | 0.0865 |
 
 ## Final Validation Comparison
 
